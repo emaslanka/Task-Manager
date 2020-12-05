@@ -19,46 +19,56 @@ public class TaskManager {
 
     public static void main(String[] args) {
 
-        ViewofTasks();
+        //ViewofTasks();
+        System.out.println("Hello, My FRiend ! Click any button + enter to start work");
         Scanner choseOne = new Scanner(System.in);
-        String Input = choseOne.nextLine();  // User can choose one task
+        String Input = choseOne.nextLine();                                                                 // User can choose one task
+                                                                         // Reading table from file, and getting it to 2D Table
 
-        String[][] TasksDatesIMp = getTableStrings();                                                                  // Reading table from file, and getting it to 2D Table
+        do {
+            String[][] TasksDatesIMp = getTableStrings();
+            ViewofTasks();
+            Input = choseOne.nextLine();
 
-
-        switch (Input) {
-            case "Add": {
-                String[][] tab = Addtask(TasksDatesIMp);
-                SavetoFile(tab);
-                break;
-            }
-            case "List": {
-                try {                                                                                                   //REad a file and saving datas in 2D array, check if file exists
-                    readFile();
-                } catch (IOException E) {
-                    E.printStackTrace();
+            switch (Input) {
+                case "Add": {
+                    String[][] tab = Addtask(TasksDatesIMp);
+                    SavetoFile(tab);
+                    break;
                 }
-                break;
-            }
+                case "List": {
+                    try {                                                                                                   //REad a file and saving datas in 2D array, check if file exists
+                        readFile();
+                    } catch (IOException E) {
+                        E.printStackTrace();
+                    }
+                    break;
+                }
 
 
-            case "Remove": {                                                                                             //Removing task
-                System.out.println("Please select number to remove ?");
-                String number = choseOne.nextLine();
-                RemoveTask(TasksDatesIMp, number);
-                break;
+                case "Remove": {                                                                                             //Removing task
+                    System.out.println("Please select number to remove ?");
+                    String number = choseOne.nextLine();
+
+                    String[][] reducedTable = RemoveTask(TasksDatesIMp, number);
+                    SavetoFile(reducedTable);
+                    break;
+                }
+
+                case "Exit": {
+                    System.out.println(ConsoleColors.PURPLE + "Bye bye. I hope to see you again");
+                    break;
+                }
+                default: {
+                    System.out.println(ConsoleColors.RED + "PLease, select correct option");
+                }
             }
 
-            case "Exit": {
-                System.out.println(ConsoleColors.PURPLE + "Bye bye. I hope to see you again");
-                break;
-            }
-            default: {
-                System.out.println(ConsoleColors.RED + "PLease, select correct option");
-            }
         }
+        while(!Input.equals("Exit"));
 
         choseOne.close();
+
     }
 
 
@@ -130,7 +140,7 @@ public class TaskManager {
 
         String[][] TabletoRead = getTableStrings();
         for (int i = 0; i < TabletoRead.length; i++) {
-            System.out.println(i + 1 + " " + Arrays.toString(TabletoRead[i]));
+            System.out.println(ConsoleColors.YELLOW + (i + 1) + " " + Arrays.toString(TabletoRead[i]));
         }
     }
 
@@ -157,15 +167,13 @@ public class TaskManager {
         newTaskDatesImp[newTaskDatesImp.length - 1][1] = date;
         newTaskDatesImp[newTaskDatesImp.length - 1][2] = importance;
 
-        add.close();
 
-        SavetoFile(newTaskDatesImp);
         return newTaskDatesImp;
 
 
     }
 
-    public static void RemoveTask(String[][] TasksDatesIMp, String number) {
+    public static String[][] RemoveTask(String[][] TasksDatesIMp, String number) {
 
 
         if (NumberUtils.isParsable(number) && Integer.parseInt(number) > 0) {
@@ -180,7 +188,7 @@ public class TaskManager {
             System.out.println("Incorrect value. Try again");
         }
 
-        SavetoFile(TasksDatesIMp);
+       return TasksDatesIMp;
 
     }
 }
